@@ -110,7 +110,7 @@ class EuroNewsSkill(CommonPlaySkill):
 
         if match is not None:
             return (phrase, match,
-                    {"media_type": media_type, "query": phrase,
+                    {"media_type": CPSMatchType.NEWS, "query": phrase,
                      "url": self.urls[lang], "lang": lang,
                      "score": min(1, score)})
         return None
