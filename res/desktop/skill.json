@@ -1,0 +1,23 @@
+{
+  "name": "Euro News Skill",
+  "skillname": "skill-euronews",
+  "authorname": "JarbasSkills",
+  "foldername": "",
+  "url": "https://github.com/JarbasSkills/skill-euronews",
+  "branch": "master",
+  "desktopFile": false,
+  "warning": "",
+  "systemDeps": false,
+  "platforms": [
+    "arm",
+    "arm64",
+    "i386",
+    "x86_64",
+    "ia64"
+  ],
+  "examples": [
+    "play euronews",
+    "play news in portuguese",
+    "play news in spanish"
+  ]
+}
