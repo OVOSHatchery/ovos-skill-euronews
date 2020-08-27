@@ -81,8 +81,8 @@ class EuroNewsSkill(CommonPlaySkill):
         match = None
         score = 0
 
-        if media_type == CPSMatchType.VIDEO:
-            score += 0.1
+        if media_type == CPSMatchType.VIDEO or self.voc_match(phrase, "video"):
+            score += 0.2
             match = CPSMatchLevel.GENERIC
         elif media_type == CPSMatchType.NEWS or self.voc_match(phrase, "news"):
             score += 0.5
@@ -101,9 +101,6 @@ class EuroNewsSkill(CommonPlaySkill):
 
             lang, lang_score = self.match_lang(phrase, lang)
             score += lang_score
-
-        if self.voc_match(phrase, "video"):
-            score += 0.2
 
         if score >= 0.9:
             match = CPSMatchLevel.EXACT
