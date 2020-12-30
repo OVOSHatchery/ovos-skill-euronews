@@ -1,5 +1,5 @@
-from mycroft.skills.common_play_skill import CommonPlaySkill, CPSMatchLevel, \
-    CPSMatchType, CPSTrackStatus
+from ovos_utils.waiting_for_mycroft.common_play import CommonPlaySkill, \
+    CPSMatchLevel, CPSMatchType, CPSTrackStatus
 import pafy
 from os.path import join, dirname
 
@@ -16,12 +16,12 @@ class EuroNewsSkill(CommonPlaySkill):
                                 CPSMatchType.NEWS]
 
         self.urls = {
-            "pt": "https://www.youtube.com/watch?v=LITSGYymJuU",
-            "es": "https://www.youtube.com/watch?v=tOHDYq94CZ8",
-            "en": "https://www.youtube.com/watch?v=LXbCPcrJkn0",
-            "it": "https://www.youtube.com/watch?v=1o_qTUH1Wp8",
-            "fr": "https://www.youtube.com/watch?v=ENMlzJayYAY",
-            "de": "https://www.youtube.com/watch?v=jzBtWWeN7DM"
+            "pt": "https://www.youtube.com/watch?v=VOw7bts_rGQ",
+            "es": "https://www.youtube.com/watch?v=JbKgQhFlMdU",
+            "en": "https://www.youtube.com/watch?v=sPgqEHsONK8",
+            "it": "https://www.youtube.com/watch?v=6Wbu_82PF2I",
+            "fr": "https://www.youtube.com/watch?v=MsN0_WNXvh8",
+            "de": "https://www.youtube.com/watch?v=gdyuPcnSDuY"
         }
 
     def initialize(self):
@@ -86,7 +86,7 @@ class EuroNewsSkill(CommonPlaySkill):
             match = CPSMatchLevel.GENERIC
 
         if media_type == CPSMatchType.NEWS or self.voc_match(phrase, "news"):
-            score += 0.5
+            score += 0.6
             match = CPSMatchLevel.CATEGORY
 
             if self.voc_match(phrase, "euro") or \
@@ -104,6 +104,7 @@ class EuroNewsSkill(CommonPlaySkill):
             lang, lang_score = self.match_lang(phrase, lang)
             score += lang_score
 
+        print(score, match, lang_score)
         if score >= 0.9:
             match = CPSMatchLevel.EXACT
 
@@ -125,11 +126,7 @@ class EuroNewsSkill(CommonPlaySkill):
                                  image=image,
                                  playlist_position=0,
                                  status=CPSTrackStatus.PLAYING_GUI)
-            self.gui["status"] = str("play")
-            self.gui["video"] = url
-            self.gui["videoThumb"] = image
-            self.gui["videoTitle"] = "Euronews"
-            self.gui.show_page("VideoPlayer.qml", override_idle=True)
+            self.gui.play_video(url)
         else:
             url = self.get_audio_stream(url)
             self.audioservice.play(url, utterance=self.play_service_string)
@@ -139,7 +136,7 @@ class EuroNewsSkill(CommonPlaySkill):
                                  status=CPSTrackStatus.PLAYING_AUDIOSERVICE)
 
     def stop(self):
-        self.gui.clear()
+        self.gui.release()
 
     # youtube handling
     @staticmethod
@@ -152,11 +149,7 @@ class EuroNewsSkill(CommonPlaySkill):
 
     @staticmethod
     def get_video_stream(url):
-        vid = pafy.new(url)
-        stream = vid.getbestvideo()
-        if stream:
-            return stream.url
-        return vid.streams[0].url  # stream fallback
+        return pafy.new(url).streams[0].url  # stream fallback
 
 
 def create_skill():

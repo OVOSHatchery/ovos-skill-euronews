@@ -1,4 +1,4 @@
-# <img src='./res/icon/icon.png' card_color='#40DBB0' width='50' height='50' style='vertical-align:bottom'/> Euronews Live Stream
+# <img src='./res/icon/euronews.png' card_color='#40DBB0' width='50' height='50' style='vertical-align:bottom'/> Euronews Live Stream
 
 Live news from Euronews
 

@@ -3,7 +3,7 @@ Terminal=false
 Type=Application
 Name=Euro News Skill
 Exec=mycroft-gui-app --hideTextInput --skill=skill-euronews.jarbasskills.home
-Icon=icon.png
+Icon=euronews.png
 Categories=VoiceApp
 StartupNotify=false
 X-DBUS-StartupType=None
