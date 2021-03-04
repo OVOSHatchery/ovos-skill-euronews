@@ -11,7 +11,7 @@ class EuroNewsSkill(BetterCommonPlaySkill):
         self.supported_media = [CPSMatchType.GENERIC,
                                 CPSMatchType.VIDEO,
                                 CPSMatchType.NEWS]
-        self.default_image = join(dirname(__file__), "ui", "logo.png")
+        self.default_image = join(dirname(__file__), "ui", "euronews.png")
         self.skill_logo = join(dirname(__file__), "ui", "euronews.png")
         self.skill_icon = join(dirname(__file__), "ui", "euronews.png")
         self.default_bg = join(dirname(__file__), "ui", "logo.png")
@@ -69,23 +69,24 @@ class EuroNewsSkill(BetterCommonPlaySkill):
 
         if self.voc_match(phrase, "euronews"):
             score += 80
-
-        return [
-            {
-                "match_confidence": min(100, score),
-                "media_type": CPSMatchType.NEWS,
-                "uri": url,
-                "playback": CPSPlayback.GUI,
-                "image": self.default_image,
-                "bg_image": self.default_bg,
-                "skill_icon": self.skill_icon,
-                "skill_logo": self.skill_logo,
-                "length": 0,
-                "title": "EuroNews",
-                "author": "EuroNews",
-                "album": "EuroNews"
-            }
-        ]
+        if score >= CPSMatchConfidence.AVERAGE:
+            return [
+                {
+                    "match_confidence": min(100, score),
+                    "media_type": CPSMatchType.NEWS,
+                    "uri": url,
+                    "playback": CPSPlayback.GUI,
+                    "image": self.default_image,
+                    "bg_image": self.default_bg,
+                    "skill_icon": self.skill_icon,
+                    "skill_logo": self.skill_logo,
+                    "length": 0,
+                    "title": "EuroNews",
+                    "author": "EuroNews",
+                    "album": "EuroNews"
+                }
+            ]
+        return []
 
 
 class EuroNewsLiveStream:
