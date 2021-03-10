@@ -1,4 +1,4 @@
 youtube-dl
 pafy
-ovos_utils>=0.0.4
+ovos_utils>=0.0.8a1
 youtube_searcher>=0.1.5
