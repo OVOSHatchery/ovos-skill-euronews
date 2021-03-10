@@ -9,12 +9,14 @@ class EuroNewsSkill(BetterCommonPlaySkill):
     def __init__(self):
         super().__init__("Euronews")
         self.supported_media = [CPSMatchType.GENERIC,
+                                CPSMatchType.AUDIO,
                                 CPSMatchType.VIDEO,
+                                CPSMatchType.TV,
                                 CPSMatchType.NEWS]
-        self.default_image = join(dirname(__file__), "ui", "euronews.png")
+        self.default_image = join(dirname(__file__), "ui", "logo.png")
         self.skill_logo = join(dirname(__file__), "ui", "euronews.png")
         self.skill_icon = join(dirname(__file__), "ui", "euronews.png")
-        self.default_bg = join(dirname(__file__), "ui", "logo.png")
+        self.default_bg = join(dirname(__file__), "ui", "bg.jpeg")
 
     def get_intro_message(self):
         self.speak_dialog("intro")
@@ -22,24 +24,18 @@ class EuroNewsSkill(BetterCommonPlaySkill):
 
     # common play
     def match_lang(self, phrase):
-        score = 0
         lang = self.lang.split("-")[0]
         if self.voc_match(phrase, "pt"):
-            score += 0.4
             lang = "pt"
-        if self.voc_match(phrase, "it"):
-            score += 0.4
+        elif self.voc_match(phrase, "it"):
             lang = "it"
-        if self.voc_match(phrase, "fr"):
-            score += 0.4
+        elif self.voc_match(phrase, "fr"):
             lang = "fr"
-        if self.voc_match(phrase, "es"):
-            score += 0.4
+        elif self.voc_match(phrase, "es"):
             lang = "es"
-        if self.voc_match(phrase, "de"):
-            score += 0.4
+        elif self.voc_match(phrase, "de"):
             lang = "de"
-        return lang, score
+        return lang
 
     def CPS_search(self, phrase, media_type):
         """Analyze phrase to see if it is a play-able phrase with this skill.
@@ -59,7 +55,7 @@ class EuroNewsSkill(BetterCommonPlaySkill):
                 "bg_image": "http://optional.audioservice.background.jpg"
             }
         """
-        lang, _ = self.match_lang(phrase)
+        lang = self.match_lang(phrase)
         url = EuroNewsLiveStream.get_stream(lang)
         score = 0
         if media_type == CPSMatchType.NEWS or self.voc_match(phrase, "news"):
@@ -70,22 +66,80 @@ class EuroNewsSkill(BetterCommonPlaySkill):
         if self.voc_match(phrase, "euronews"):
             score += 80
         if score >= CPSMatchConfidence.AVERAGE:
-            return [
-                {
-                    "match_confidence": min(100, score),
-                    "media_type": CPSMatchType.NEWS,
-                    "uri": url,
-                    "playback": CPSPlayback.GUI,
-                    "image": self.default_image,
-                    "bg_image": self.default_bg,
-                    "skill_icon": self.skill_icon,
-                    "skill_logo": self.skill_logo,
-                    "length": 0,
-                    "title": "EuroNews",
-                    "author": "EuroNews",
-                    "album": "EuroNews"
-                }
-            ]
+            if media_type not in [CPSMatchType.AUDIO, CPSMatchType.VIDEO,
+                                  CPSMatchType.TV]:
+                # audio + video results
+                results = [
+                    {
+                        # video match
+                        "match_confidence": min(100, score),
+                        "media_type": CPSMatchType.NEWS,
+                        "uri": url,
+                        "playback": CPSPlayback.GUI,
+                        "image": self.default_image,
+                        "bg_image": self.default_bg,
+                        "skill_icon": self.skill_icon,
+                        "skill_logo": self.skill_logo,
+                        "length": 0,
+                        "title": "EuroNews",
+                        "author": "EuroNews",
+                        "album": "EuroNews"
+                    },
+                    {  # audio match
+                        "match_confidence": min(100, score - 5),
+                        "media_type": CPSMatchType.NEWS,
+                        "uri": url,
+                        "playback": CPSPlayback.AUDIO,
+                        "image": self.default_image,
+                        "bg_image": self.default_bg,
+                        "skill_icon": self.skill_icon,
+                        "skill_logo": self.skill_logo,
+                        "length": 0,
+                        "title": "EuroNews (Audio)",
+                        "author": "EuroNews",
+                        "album": "EuroNews"
+                    }
+                ]
+            elif media_type == CPSMatchType.AUDIO:
+                # audio only results
+                results = [
+                    {
+                        # video match
+                        "match_confidence": min(100, score),
+                        "media_type": CPSMatchType.NEWS,
+                        "uri": url,
+                        "playback": CPSPlayback.AUDIO,
+                        "image": self.default_image,
+                        "bg_image": self.default_bg,
+                        "skill_icon": self.skill_icon,
+                        "skill_logo": self.skill_logo,
+                        "length": 0,
+                        "title": "EuroNews",
+                        "author": "EuroNews",
+                        "album": "EuroNews"
+                    }]
+            else:
+                # gui only results
+                results = [
+                    {
+                        # video match
+                        "match_confidence": min(100, score),
+                        "media_type": CPSMatchType.NEWS,
+                        "uri": url,
+                        "playback": CPSPlayback.GUI,
+                        "image": self.default_image,
+                        "bg_image": self.default_bg,
+                        "skill_icon": self.skill_icon,
+                        "skill_logo": self.skill_logo,
+                        "length": 0,
+                        "title": "EuroNews",
+                        "author": "EuroNews",
+                        "album": "EuroNews"
+                    }]
+
+            if lang != "en":
+                pass
+            return results
         return []
 
 
